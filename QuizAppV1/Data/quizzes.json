@@ -1,0 +1,152 @@
+﻿[
+    {
+        "name": "Mécanique automobile",
+        "questions": [
+            {
+                "text": "Quel élément permet de réduire la vitesse du véhicule ?",
+                "options": ["Embrayage", "Boîte de vitesses", "Freins"],
+                "correctAnswer": "Freins"
+            },
+            {
+                "text": "À quoi sert une courroie de distribution ?",
+                "options": ["Refroidir le moteur", "Synchroniser les pièces du moteur", "Faire tourner les roues"],
+                "correctAnswer": "Synchroniser les pièces du moteur"
+            },
+            {
+                "text": "Quel type d’huile est essentiel pour le moteur ?",
+                "options": ["Huile de cuisson", "Huile hydraulique", "Huile moteur"],
+                "correctAnswer": "Huile moteur"
+            },
+            {
+                "text": "Quel composant convertit l’énergie du carburant en mouvement ?",
+                "options": ["Radiateur", "Moteur", "Filtre à air"],
+                "correctAnswer": "Moteur"
+            },
+            {
+                "text": "Quel rôle joue l’embrayage dans un véhicule manuel ?",
+                "options": ["Changer la direction", "Démarrer le moteur", "Coupler ou découpler le moteur et la transmission"],
+                "correctAnswer": "Coupler ou découpler le moteur et la transmission"
+            }
+        ]
+    },
+    {
+        "name": "Langage C#",
+        "questions": [
+            {
+                "text": "Que permet de faire le mot-clé `using` en C# ?",
+                "options": ["Créer une boucle", "Importer un espace de noms", "Définir une classe"],
+                "correctAnswer": "Importer un espace de noms"
+            },
+            {
+                "text": "Quelle collection est utilisée pour stocker des paires clé/valeur ?",
+                "options": ["List", "Array", "Dictionary"],
+                "correctAnswer": "Dictionary"
+            },
+            {
+                "text": "Quelle est la valeur par défaut d’un booléen ?",
+                "options": ["true", "false", "null"],
+                "correctAnswer": "false"
+            },
+            {
+                "text": "Quel mot-clé rend une méthode accessible sans créer une instance ?",
+                "options": ["static", "virtual", "override"],
+                "correctAnswer": "static"
+            },
+            {
+                "text": "Que fait `var` en C# ?",
+                "options": ["Déclare une variable de type dynamique", "Déclare une variable avec inférence de type", "Crée un tableau"],
+                "correctAnswer": "Déclare une variable avec inférence de type"
+            }
+        ]
+    },
+    {
+        "name": "Histoire et Géographie",
+        "questions": [
+            {
+                "text": "Quelle ville était la capitale de la Gaule romaine ?",
+                "options": ["Lyon", "Paris", "Marseille"],
+                "correctAnswer": "Lyon"
+            },
+            {
+                "text": "Quel événement marque le début de la Révolution française ?",
+                "options": ["Le sacre de Napoléon", "La prise de la Bastille", "La déclaration des droits de l'homme"],
+                "correctAnswer": "La prise de la Bastille"
+            },
+            {
+                "text": "Quel est le fleuve le plus long d’Europe ?",
+                "options": ["Danube", "Volga", "Rhin"],
+                "correctAnswer": "Volga"
+            },
+            {
+                "text": "Quelle est la capitale du Canada ?",
+                "options": ["Toronto", "Ottawa", "Montréal"],
+                "correctAnswer": "Ottawa"
+            },
+            {
+                "text": "Quel pays partage une frontière avec la France, l'Allemagne et l'Italie ?",
+                "options": ["Luxembourg", "Belgique", "Suisse"],
+                "correctAnswer": "Suisse"
+            }
+        ]
+    },
+    {
+        "name": "Code de la route",
+        "questions": [
+            {
+                "text": "Que signifie un feu orange clignotant ?",
+                "options": ["Passage interdit", "Cédez le passage", "Ralentir et passer avec prudence"],
+                "correctAnswer": "Ralentir et passer avec prudence"
+            },
+            {
+                "text": "Quel panneau indique une obligation ?",
+                "options": ["Panneau bleu", "Panneau rouge", "Panneau jaune"],
+                "correctAnswer": "Panneau bleu"
+            },
+            {
+                "text": "Quel est le taux maximum d’alcool autorisé pour un conducteur novice ?",
+                "options": ["0.5 g/L", "0.8 g/L", "0.2 g/L"],
+                "correctAnswer": "0.2 g/L"
+            },
+            {
+                "text": "Que faire à un passage piéton sans feu ?",
+                "options": ["Accélérer", "Klaxonner", "S'arrêter si un piéton s’engage"],
+                "correctAnswer": "S'arrêter si un piéton s’engage"
+            },
+            {
+                "text": "Quel document n’est pas obligatoire en voiture ?",
+                "options": ["Permis de conduire", "Carte grise", "Carnet d’entretien"],
+                "correctAnswer": "Carnet d’entretien"
+            }
+        ]
+    },
+    {
+        "name": "Sciences",
+        "questions": [
+            {
+                "text": "Quel gaz est essentiel à la respiration humaine ?",
+                "options": ["Oxygène", "Hydrogène", "Dioxyde de carbone"],
+                "correctAnswer": "Oxygène"
+            },
+            {
+                "text": "Quelle planète est la plus proche du Soleil ?",
+                "options": ["Mars", "Venus", "Mercure"],
+                "correctAnswer": "Mercure"
+            },
+            {
+                "text": "Quel organe pompe le sang dans tout le corps ?",
+                "options": ["Foie", "Poumons", "Cœur"],
+                "correctAnswer": "Cœur"
+            },
+            {
+                "text": "Quelle est la formule chimique de l’eau ?",
+                "options": ["H2O", "O2", "CO2"],
+                "correctAnswer": "H2O"
+            },
+            {
+                "text": "À quel état correspond la glace ?",
+                "options": ["Gazeux", "Liquide", "Solide"],
+                "correctAnswer": "Solide"
+            }
+        ]
+    }
+]
