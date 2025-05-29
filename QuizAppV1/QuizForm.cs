@@ -22,37 +22,10 @@ public partial class QuizForm : Form
 
     private void ToggleQuizUI(bool sessionEnCours)
     {
-        // Quand une session est en cours
-        if (sessionEnCours)
-        {
-            // Masquer les choix de discipline
-            comboDisciplines.Enabled = false;
-            btnCommencer.Enabled = false;
-
-            // Afficher le panel du quiz
-            panelQuiz.Visible = true;
-
-            // Activer le bouton Recommencer
-            btnRecommencer.Enabled = true;
-        }
-        else
-        {
-            // Afficher les choix de discipline
-            comboDisciplines.Enabled = true;
-            btnCommencer.Enabled = true;
-
-            // Masquer le quiz
-            panelQuiz.Visible = false;
-
-            // Désactiver Recommencer
-            btnRecommencer.Enabled = false;
-
-            // Réinitialisation visuelle
-            lblFeedback.Text = "Retour d'information ici";
-            lblQuestion.Text = "Question ici";
-            lblProgression.Text = "Progression ici";
-            lblTimer.Text = "10s par question";
-        }
+        comboDisciplines.Enabled = !sessionEnCours;
+        btnCommencer.Enabled = !sessionEnCours;
+        panelQuiz.Visible = sessionEnCours;
+        btnRecommencer.Enabled = sessionEnCours;
     }
 
 
@@ -110,7 +83,7 @@ public partial class QuizForm : Form
             return;
         }
 
-        SetAnswerButtonsEnabled(true);
+        SwitchAnswerButtonsStates(true);
 
         Question question = _questions[_currentQuestionIndex];
         lblQuestion.Text = question.Text;
@@ -134,7 +107,7 @@ public partial class QuizForm : Form
 
         timer1.Stop();
 
-        SetAnswerButtonsEnabled(false);
+        SwitchAnswerButtonsStates(false);
 
         string selectedAnswer = btnClicked.Text;
         Question currentQuestion = _questions[_currentQuestionIndex];
@@ -153,14 +126,13 @@ public partial class QuizForm : Form
         }
 
         _currentQuestionIndex++;
-        //Task.Delay(1500).ContinueWith(Invoke(ShowQuestion)); Task.Invoke ne fonctionne pas
 
-        await Task.Delay(_taskDelay);
+        await Task.Delay(_taskDelay); // Remplacer cela par un autre Timer qui déclenchera l'appel de ShowQuestion
 
         ShowQuestion();
     }
 
-    private void SetAnswerButtonsEnabled(bool enabled)
+    private void SwitchAnswerButtonsStates(bool enabled)
     {
         btnOption1.Enabled = enabled;
         btnOption2.Enabled = enabled;
@@ -169,7 +141,7 @@ public partial class QuizForm : Form
 
     private void btnRecommencer_Click(object sender, EventArgs e)
     {
-        var confirm = MessageBox.Show(
+        DialogResult confirm = MessageBox.Show(
             "Voulez-vous vraiment recommencer le quiz ?",
             "Confirmation",
             MessageBoxButtons.YesNo,
@@ -183,9 +155,6 @@ public partial class QuizForm : Form
         _questionsCount = _questions.Count;
         _currentQuestionIndex = 0;
         _correctAnswers = 0;
-
-        //_selectedDiscipline = null;
-        //_questions.Clear();
 
         ToggleQuizUI(false);
     }
