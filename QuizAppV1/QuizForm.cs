@@ -1,3 +1,4 @@
+using QuizAppV1.Extensions;
 using QuizAppV1.Models;
 using QuizAppV1.Services;
 
@@ -10,8 +11,7 @@ public partial class QuizForm : Form
     private int _questionsCount = 0;
     private int _currentQuestionIndex = 0;
     private int _correctAnswers = 0;
-    private int _taskDelay = 1500;
-    private int _remainingTime = 10;
+    private int _remainingTime = 1000;
 
     public QuizForm()
     {
@@ -27,7 +27,6 @@ public partial class QuizForm : Form
         panelQuiz.Visible = sessionEnCours;
         btnRecommencer.Enabled = sessionEnCours;
     }
-
 
     private void LoadDisciplines()
     {
@@ -65,6 +64,9 @@ public partial class QuizForm : Form
         _currentQuestionIndex = 0;
         _correctAnswers = 0;
 
+        progressBarQuiz.Maximum = _questionsCount;
+        progressBarQuiz.Step = 1;
+
         ShowQuestion();
     }
 
@@ -75,7 +77,7 @@ public partial class QuizForm : Form
             MessageBox.Show($"Quiz terminé ! \r\nScore : {_correctAnswers} / {_questionsCount}",
                 "Résultat",
                 MessageBoxButtons.OK,
-                icon:MessageBoxIcon.Information
+                icon: MessageBoxIcon.Information
             );
 
             ToggleQuizUI(false);
@@ -94,18 +96,26 @@ public partial class QuizForm : Form
         btnOption3.Text = options.ElementAtOrDefault(2) ?? string.Empty;
 
         lblProgression.Text = $"Question {_currentQuestionIndex + 1} sur {_questionsCount}";
+        progressBarQuiz.Value = _currentQuestionIndex + 1;
+
         lblFeedback.Text = "";
 
-        _remainingTime = 10;
-        lblTimer.Text = $"Temps restant : {_remainingTime} s";
-        timer1.Start();
+        _remainingTime = 1000;
+        lblTimer.Text = $"Temps restant : {_remainingTime / 100} s";
+
+        progressBarCurrentQuestion.Maximum = _remainingTime;
+        progressBarCurrentQuestion.Step = 1;
+        progressBarCurrentQuestion.Style = ProgressBarStyle.Continuous;
+        progressBarCurrentQuestion.SetValueInstantly(_remainingTime);
+
+        timerCurrentQuestion.Start();
     }
 
-    private async void AnswerClicked(object sender, EventArgs e)
+    private void AnswerClicked(object sender, EventArgs e)
     {
         if (sender is not Button btnClicked) return;
 
-        timer1.Stop();
+        timerCurrentQuestion.Stop();
 
         SwitchAnswerButtonsStates(false);
 
@@ -127,9 +137,7 @@ public partial class QuizForm : Form
 
         _currentQuestionIndex++;
 
-        await Task.Delay(_taskDelay); // Remplacer cela par un autre Timer qui déclenchera l'appel de ShowQuestion
-
-        ShowQuestion();
+        timerNextQuestion.Start();
     }
 
     private void SwitchAnswerButtonsStates(bool enabled)
@@ -159,24 +167,51 @@ public partial class QuizForm : Form
         ToggleQuizUI(false);
     }
 
-    private async void timer1_Tick(object sender, EventArgs e)
+    private enum progressBarColor
+    {
+        Normal = 1, // green
+        Error = 2, // red
+        Warning = 3 // yellow
+    }
+
+    private void timerCurrentQuestion_Tick(object sender, EventArgs e)
     {
         _remainingTime--;
 
-        lblTimer.Text = $"Temps restant : {_remainingTime} s";
+        lblTimer.Text = $"Temps restant : {_remainingTime / 100} s";
+        progressBarCurrentQuestion.Value = _remainingTime;
 
-        if ( _remainingTime <= 0)
+        switch (_remainingTime)
         {
-            timer1.Stop();
+            case <= 400:
+                progressBarCurrentQuestion.SetState((int)progressBarColor.Error);
+                break;
+
+            case <= 700:
+                progressBarCurrentQuestion.SetState((int)progressBarColor.Warning);
+                break;
+
+            default:
+                progressBarCurrentQuestion.SetState((int)progressBarColor.Normal);
+                break;
+        }
+
+        if (_remainingTime <= 0)
+        {
+            timerCurrentQuestion.Stop();
 
             lblFeedback.Text = "Temps écoulé !";
             lblFeedback.ForeColor = Color.OrangeRed;
 
             _currentQuestionIndex++;
 
-            await Task.Delay(_taskDelay);
-
-            ShowQuestion();
+            timerNextQuestion.Start();
         }
+    }
+
+    private void timerNextQuestion_Tick(object sender, EventArgs e)
+    {
+        timerNextQuestion.Stop();
+        ShowQuestion();
     }
 }

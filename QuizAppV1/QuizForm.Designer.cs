@@ -32,8 +32,10 @@ partial class QuizForm
         comboDisciplines = new ComboBox();
         btnCommencer = new Button();
         btnRecommencer = new Button();
-        timer1 = new System.Windows.Forms.Timer(components);
+        timerCurrentQuestion = new System.Windows.Forms.Timer(components);
         panelQuiz = new Panel();
+        progressBarCurrentQuestion = new ProgressBar();
+        progressBarQuiz = new ProgressBar();
         lblQuestion = new Label();
         btnOption3 = new Button();
         btnOption2 = new Button();
@@ -41,6 +43,7 @@ partial class QuizForm
         lblProgression = new Label();
         lblFeedback = new Label();
         lblTimer = new Label();
+        timerNextQuestion = new System.Windows.Forms.Timer(components);
         panelQuiz.SuspendLayout();
         SuspendLayout();
         // 
@@ -74,13 +77,15 @@ partial class QuizForm
         btnRecommencer.UseVisualStyleBackColor = true;
         btnRecommencer.Click += btnRecommencer_Click;
         // 
-        // timer1
+        // timerCurrentQuestion
         // 
-        timer1.Interval = 1000;
-        timer1.Tick += timer1_Tick;
+        timerCurrentQuestion.Interval = 10;
+        timerCurrentQuestion.Tick += timerCurrentQuestion_Tick;
         // 
         // panelQuiz
         // 
+        panelQuiz.Controls.Add(progressBarCurrentQuestion);
+        panelQuiz.Controls.Add(progressBarQuiz);
         panelQuiz.Controls.Add(lblQuestion);
         panelQuiz.Controls.Add(btnOption3);
         panelQuiz.Controls.Add(btnOption2);
@@ -93,11 +98,25 @@ partial class QuizForm
         panelQuiz.Size = new Size(776, 392);
         panelQuiz.TabIndex = 10;
         // 
+        // progressBarCurrentQuestion
+        // 
+        progressBarCurrentQuestion.Location = new Point(591, 343);
+        progressBarCurrentQuestion.Name = "progressBarCurrentQuestion";
+        progressBarCurrentQuestion.Size = new Size(182, 18);
+        progressBarCurrentQuestion.TabIndex = 18;
+        // 
+        // progressBarQuiz
+        // 
+        progressBarQuiz.Location = new Point(3, 343);
+        progressBarQuiz.Name = "progressBarQuiz";
+        progressBarQuiz.Size = new Size(143, 18);
+        progressBarQuiz.TabIndex = 17;
+        // 
         // lblQuestion
         // 
         lblQuestion.AutoSize = true;
         lblQuestion.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-        lblQuestion.Location = new Point(3, 35);
+        lblQuestion.Location = new Point(3, 23);
         lblQuestion.Name = "lblQuestion";
         lblQuestion.Size = new Size(115, 28);
         lblQuestion.TabIndex = 10;
@@ -105,7 +124,7 @@ partial class QuizForm
         // 
         // btnOption3
         // 
-        btnOption3.Location = new Point(114, 227);
+        btnOption3.Location = new Point(114, 215);
         btnOption3.Name = "btnOption3";
         btnOption3.Size = new Size(550, 50);
         btnOption3.TabIndex = 13;
@@ -115,7 +134,7 @@ partial class QuizForm
         // 
         // btnOption2
         // 
-        btnOption2.Location = new Point(114, 159);
+        btnOption2.Location = new Point(114, 147);
         btnOption2.Name = "btnOption2";
         btnOption2.Size = new Size(550, 50);
         btnOption2.TabIndex = 12;
@@ -125,7 +144,7 @@ partial class QuizForm
         // 
         // btnOption1
         // 
-        btnOption1.Location = new Point(114, 92);
+        btnOption1.Location = new Point(114, 80);
         btnOption1.Name = "btnOption1";
         btnOption1.Size = new Size(550, 50);
         btnOption1.TabIndex = 11;
@@ -147,7 +166,7 @@ partial class QuizForm
         // 
         lblFeedback.AutoSize = true;
         lblFeedback.Font = new Font("Segoe UI", 10.2F, FontStyle.Italic, GraphicsUnit.Point, 0);
-        lblFeedback.Location = new Point(3, 321);
+        lblFeedback.Location = new Point(3, 309);
         lblFeedback.Name = "lblFeedback";
         lblFeedback.Size = new Size(183, 23);
         lblFeedback.TabIndex = 14;
@@ -158,11 +177,16 @@ partial class QuizForm
         lblTimer.AutoSize = true;
         lblTimer.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
         lblTimer.ForeColor = Color.Maroon;
-        lblTimer.Location = new Point(604, 321);
+        lblTimer.Location = new Point(604, 309);
         lblTimer.Name = "lblTimer";
         lblTimer.Size = new Size(143, 23);
         lblTimer.TabIndex = 15;
         lblTimer.Text = "10s par question";
+        // 
+        // timerNextQuestion
+        // 
+        timerNextQuestion.Interval = 1500;
+        timerNextQuestion.Tick += timerNextQuestion_Tick;
         // 
         // QuizForm
         // 
@@ -188,7 +212,7 @@ partial class QuizForm
     private ComboBox comboDisciplines;
     private Button btnCommencer;
     private Button btnRecommencer;
-    private System.Windows.Forms.Timer timer1;
+    private System.Windows.Forms.Timer timerCurrentQuestion;
     private Panel panelQuiz;
     private Label lblQuestion;
     private Button btnOption3;
@@ -197,4 +221,7 @@ partial class QuizForm
     private Label lblProgression;
     private Label lblFeedback;
     private Label lblTimer;
+    private ProgressBar progressBarQuiz;
+    private System.Windows.Forms.Timer timerNextQuestion;
+    private ProgressBar progressBarCurrentQuestion;
 }
