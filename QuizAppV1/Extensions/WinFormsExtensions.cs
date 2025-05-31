@@ -18,4 +18,10 @@ internal static class WinFormsExtensions
     {
         SendMessage(pBar.Handle, 1040, (IntPtr)state, IntPtr.Zero);
     }
+
+    public static void SetText(this Label label, string text, Color color)
+    {
+        label.Text = text;
+        label.ForeColor = color;
+    }
 }

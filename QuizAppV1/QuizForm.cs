@@ -106,15 +106,9 @@ public partial class QuizForm : Form
         _session!.RegisterAnswer(selectedAnswer);
 
         if (_session.CurrentQuestion!.IsCorrect(selectedAnswer))
-        {
-            lblFeedback.Text = "Bonne réponse !";
-            lblFeedback.ForeColor = Color.Green;
-        }
+            lblFeedback.SetText("Bonne réponse !", Color.Green);
         else
-        {
-            lblFeedback.Text = "Mauvaise réponse.";
-            lblFeedback.ForeColor = Color.Red;
-        }
+            lblFeedback.SetText("Mauvaise réponse !", Color.Red);
 
         _session.MoveNext();
         timerNextQuestion.Start();
