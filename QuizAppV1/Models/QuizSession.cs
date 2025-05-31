@@ -1,24 +1,24 @@
 ﻿namespace QuizAppV1.Models;
 
-public class QuizSession
+internal class QuizSession
 {
-    internal List<Question> Questions { get; }
-    public int CurrentIndex { get; private set; } = 0;
-    public int CorrectAnswers { get; private set; } = 0;
+    private List<Question> Questions { get; } = new();
+    internal int CurrentIndex { get; private set; } = 0;
+    internal int CorrectAnswers { get; private set; } = 0;
 
     internal Question? CurrentQuestion =>
         (CurrentIndex >= 0 && CurrentIndex < Questions.Count)
             ? Questions[CurrentIndex]
             : null;
 
-    public int TotalQuestions => Questions.Count;
+    internal int TotalQuestions => Questions.Count;
 
     internal QuizSession(IEnumerable<Question> questions)
     {
-        Questions = questions.ToList();
+        Questions.AddRange(questions);
     }
 
-    public void RegisterAnswer(string answer)
+    internal void RegisterAnswer(string answer)
     {
         if (CurrentQuestion is null)
             return;
@@ -27,11 +27,19 @@ public class QuizSession
             CorrectAnswers++;
     }
 
-    public bool MoveNext()
+    internal bool MoveNext()
     {
         CurrentIndex++;
         return CurrentIndex < Questions.Count;
     }
 
-    public bool IsFinished => CurrentIndex >= Questions.Count;
+    internal void Reset(IEnumerable<Question> questions)
+    {
+        Questions.Clear();
+        Questions.AddRange(questions);
+        CurrentIndex = 0;
+        CorrectAnswers = 0;
+    }
+
+    internal bool IsFinished => CurrentIndex >= Questions.Count;
 }

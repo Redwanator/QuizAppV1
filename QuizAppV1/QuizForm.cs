@@ -1,3 +1,4 @@
+using QuizAppV1.Common;
 using QuizAppV1.Extensions;
 using QuizAppV1.Models;
 using QuizAppV1.Services;
@@ -7,7 +8,7 @@ namespace QuizAppV1;
 public partial class QuizForm : Form
 {
     private Discipline? _selectedDiscipline;
-    private QuizSession? _session;
+    private QuizService? _controller;
     private int _questionDurationMs = 10000;
     private int _remainingMs = 10000;
 
@@ -44,48 +45,63 @@ public partial class QuizForm : Form
     {
         if (_selectedDiscipline == null)
         {
-            MessageBox.Show("Veuillez sélectionner une discipline avant de commencer le quiz.");
+            MessageBox.Show(Messages.SelectDiscipline);
             return;
         }
 
-        _session = new QuizSession(_selectedDiscipline.Questions);
+        _controller = new QuizService(_selectedDiscipline.Questions);
 
         ToggleQuizUI(true);
 
-        progressBarQuiz.Maximum = _session.Questions.Count;
+        progressBarQuiz.Maximum = _controller.TotalQuestions;
 
         ShowQuestion();
     }
 
     private void ShowQuestion()
     {
-        if (_session?.IsFinished != false)
+        if (_controller?.IsFinished != false)
         {
-            MessageBox.Show($"Quiz terminé ! \r\nScore : {_session!.CorrectAnswers} / {_session.TotalQuestions}",
-                "Résultat",
-                MessageBoxButtons.OK,
-                icon: MessageBoxIcon.Information
-            );
-
+            ShowEndOfQuizMessage();
             ToggleQuizUI(false);
-
             return;
         }
 
         SwitchAnswerButtonsStates(true);
+        DisplayCurrentQuestion();
+        DisplayProgress();
+        ResetTimerUI();
+    }
 
-        Question question = _session!.CurrentQuestion!;
+    private void ShowEndOfQuizMessage()
+    {
+        MessageBox.Show(
+            string.Format(Messages.QuizEndMessage, _controller!.CorrectAnswers, _controller.TotalQuestions),
+            Messages.QuizEndTitle,
+            MessageBoxButtons.OK,
+            icon: MessageBoxIcon.Information
+        );
+    }
+
+    private void DisplayCurrentQuestion()
+    {
+        Question question = _controller!.CurrentQuestion!;
         lblQuestion.Text = question.Text;
 
         btnOption1.Text = question.Options.ElementAtOrDefault(0) ?? string.Empty;
         btnOption2.Text = question.Options.ElementAtOrDefault(1) ?? string.Empty;
         btnOption3.Text = question.Options.ElementAtOrDefault(2) ?? string.Empty;
+    }
 
-        lblProgression.Text = $"Question {_session.CurrentIndex + 1} sur {_session.TotalQuestions}";
-        progressBarQuiz.Value = _session.CurrentIndex + 1;
-
+    private void DisplayProgress()
+    {
+        lblProgression.Text = $"Question {_controller!.CurrentIndex + 1} sur {_controller.TotalQuestions}";
+        progressBarQuiz.Value = _controller.CurrentIndex + 1;
         lblFeedback.Text = "";
+    }
 
+    private void ResetTimerUI()
+    {
         _remainingMs = _questionDurationMs;
         progressBarCurrentQuestion.Maximum = _questionDurationMs;
         progressBarCurrentQuestion.SetValueInstantly(_remainingMs);
@@ -103,21 +119,21 @@ public partial class QuizForm : Form
         SwitchAnswerButtonsStates(false);
 
         string selectedAnswer = btnClicked.Text;
-        _session!.RegisterAnswer(selectedAnswer);
+        bool isCorrect = _controller!.RegisterAndCheckAnswer(selectedAnswer);
 
-        if (_session.CurrentQuestion!.IsCorrect(selectedAnswer))
-            lblFeedback.SetText("Bonne réponse !", Color.Green);
+        if (isCorrect)
+            lblFeedback.SetText(Messages.GoodAnswer, Color.Green);
         else
-            lblFeedback.SetText("Mauvaise réponse !", Color.Red);
+            lblFeedback.SetText(Messages.BadAnswer, Color.Red);
 
-        _session.MoveNext();
+        _controller.MoveNext();
         timerNextQuestion.Start();
     }
 
     private void btnRecommencer_Click(object sender, EventArgs e)
     {
         DialogResult confirm = MessageBox.Show(
-            "Voulez-vous vraiment recommencer le quiz ?",
+            Messages.RestartConfirmation,
             "Confirmation",
             MessageBoxButtons.YesNo,
             MessageBoxIcon.Question
@@ -126,7 +142,7 @@ public partial class QuizForm : Form
         if (confirm == DialogResult.No)
             return;
 
-        _session = new QuizSession(_selectedDiscipline?.Questions ?? []);
+        _controller?.Reset(_selectedDiscipline?.Questions ?? []);
         ToggleQuizUI(false);
     }
 
@@ -161,9 +177,8 @@ public partial class QuizForm : Form
         if (_remainingMs == 0)
         {
             timerCurrentQuestion.Stop();
-            lblFeedback.Text = "Temps écoulé !";
-            lblFeedback.ForeColor = Color.OrangeRed;
-            _session?.MoveNext();
+            lblFeedback.SetText(Messages.TimeOut, Color.OrangeRed);
+            _controller?.MoveNext();
             timerNextQuestion.Start();
         }
     }
