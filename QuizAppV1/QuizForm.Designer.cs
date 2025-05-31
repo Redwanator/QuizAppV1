@@ -79,7 +79,7 @@ partial class QuizForm
         // 
         // timerCurrentQuestion
         // 
-        timerCurrentQuestion.Interval = 10;
+        timerCurrentQuestion.Interval = 1000;
         timerCurrentQuestion.Tick += timerCurrentQuestion_Tick;
         // 
         // panelQuiz

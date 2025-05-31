@@ -7,11 +7,9 @@ namespace QuizAppV1;
 public partial class QuizForm : Form
 {
     private Discipline? _selectedDiscipline;
-    private List<Question> _questions = new();
-    private int _questionsCount = 0;
-    private int _currentQuestionIndex = 0;
-    private int _correctAnswers = 0;
-    private int _remainingTime = 1000;
+    private QuizSession? _session;
+    private int _questionDurationMs = 10000;
+    private int _remainingMs = 10000;
 
     public QuizForm()
     {
@@ -50,31 +48,20 @@ public partial class QuizForm : Form
             return;
         }
 
-        _questions = _selectedDiscipline.Questions.ToList();
-
-        if (_questions == null)
-        {
-            MessageBox.Show("Aucune question disponible pour cette discipline.");
-            return;
-        }
+        _session = new QuizSession(_selectedDiscipline.Questions);
 
         ToggleQuizUI(true);
 
-        _questionsCount = _questions.Count;
-        _currentQuestionIndex = 0;
-        _correctAnswers = 0;
-
-        progressBarQuiz.Maximum = _questionsCount;
-        progressBarQuiz.Step = 1;
+        progressBarQuiz.Maximum = _session.Questions.Count;
 
         ShowQuestion();
     }
 
     private void ShowQuestion()
     {
-        if (_currentQuestionIndex >= _questionsCount)
+        if (_session?.IsFinished != false)
         {
-            MessageBox.Show($"Quiz terminé ! \r\nScore : {_correctAnswers} / {_questionsCount}",
+            MessageBox.Show($"Quiz terminé ! \r\nScore : {_session!.CorrectAnswers} / {_session.TotalQuestions}",
                 "Résultat",
                 MessageBoxButtons.OK,
                 icon: MessageBoxIcon.Information
@@ -87,27 +74,24 @@ public partial class QuizForm : Form
 
         SwitchAnswerButtonsStates(true);
 
-        Question question = _questions[_currentQuestionIndex];
+        Question question = _session!.CurrentQuestion!;
         lblQuestion.Text = question.Text;
 
-        IEnumerable<string> options = question.Options;
-        btnOption1.Text = options.ElementAtOrDefault(0) ?? string.Empty;
-        btnOption2.Text = options.ElementAtOrDefault(1) ?? string.Empty;
-        btnOption3.Text = options.ElementAtOrDefault(2) ?? string.Empty;
+        btnOption1.Text = question.Options.ElementAtOrDefault(0) ?? string.Empty;
+        btnOption2.Text = question.Options.ElementAtOrDefault(1) ?? string.Empty;
+        btnOption3.Text = question.Options.ElementAtOrDefault(2) ?? string.Empty;
 
-        lblProgression.Text = $"Question {_currentQuestionIndex + 1} sur {_questionsCount}";
-        progressBarQuiz.Value = _currentQuestionIndex + 1;
+        lblProgression.Text = $"Question {_session.CurrentIndex + 1} sur {_session.TotalQuestions}";
+        progressBarQuiz.Value = _session.CurrentIndex + 1;
 
         lblFeedback.Text = "";
 
-        _remainingTime = 1000;
-        lblTimer.Text = $"Temps restant : {_remainingTime / 100} s";
+        _remainingMs = _questionDurationMs;
+        progressBarCurrentQuestion.Maximum = _questionDurationMs;
+        progressBarCurrentQuestion.SetValueInstantly(_remainingMs);
 
-        progressBarCurrentQuestion.Maximum = _remainingTime;
-        progressBarCurrentQuestion.Step = 1;
-        progressBarCurrentQuestion.Style = ProgressBarStyle.Continuous;
-        progressBarCurrentQuestion.SetValueInstantly(_remainingTime);
-
+        lblTimer.Text = $"Temps restant : {_remainingMs / 1000} s";
+        timerCurrentQuestion.Interval = 50;
         timerCurrentQuestion.Start();
     }
 
@@ -116,35 +100,24 @@ public partial class QuizForm : Form
         if (sender is not Button btnClicked) return;
 
         timerCurrentQuestion.Stop();
-
         SwitchAnswerButtonsStates(false);
 
         string selectedAnswer = btnClicked.Text;
-        Question currentQuestion = _questions[_currentQuestionIndex];
+        _session!.RegisterAnswer(selectedAnswer);
 
-        if (currentQuestion.IsCorrect(selectedAnswer))
+        if (_session.CurrentQuestion!.IsCorrect(selectedAnswer))
         {
             lblFeedback.Text = "Bonne réponse !";
             lblFeedback.ForeColor = Color.Green;
-            _correctAnswers++;
         }
         else
         {
-            //lblFeedback.Text = $"Mauvaise réponse. Réponse attendue : {currentQuestion.CorrectAnswer}";
             lblFeedback.Text = "Mauvaise réponse.";
             lblFeedback.ForeColor = Color.Red;
         }
 
-        _currentQuestionIndex++;
-
+        _session.MoveNext();
         timerNextQuestion.Start();
-    }
-
-    private void SwitchAnswerButtonsStates(bool enabled)
-    {
-        btnOption1.Enabled = enabled;
-        btnOption2.Enabled = enabled;
-        btnOption3.Enabled = enabled;
     }
 
     private void btnRecommencer_Click(object sender, EventArgs e)
@@ -159,12 +132,15 @@ public partial class QuizForm : Form
         if (confirm == DialogResult.No)
             return;
 
-        _questions = _selectedDiscipline?.Questions?.ToList() ?? new List<Question>();
-        _questionsCount = _questions.Count;
-        _currentQuestionIndex = 0;
-        _correctAnswers = 0;
-
+        _session = new QuizSession(_selectedDiscipline?.Questions ?? []);
         ToggleQuizUI(false);
+    }
+
+    private void SwitchAnswerButtonsStates(bool enabled)
+    {
+        btnOption1.Enabled = enabled;
+        btnOption2.Enabled = enabled;
+        btnOption3.Enabled = enabled;
     }
 
     private enum progressBarColor
@@ -176,35 +152,24 @@ public partial class QuizForm : Form
 
     private void timerCurrentQuestion_Tick(object sender, EventArgs e)
     {
-        _remainingTime--;
+        _remainingMs = Math.Max(0, _remainingMs - timerCurrentQuestion.Interval);
 
-        lblTimer.Text = $"Temps restant : {_remainingTime / 100} s";
-        progressBarCurrentQuestion.Value = _remainingTime;
+        progressBarCurrentQuestion.Value = _remainingMs;
+        lblTimer.Text = $"Temps restant : {_remainingMs / 1000} s";
 
-        switch (_remainingTime)
+        progressBarCurrentQuestion.SetState(_remainingMs switch
         {
-            case <= 400:
-                progressBarCurrentQuestion.SetState((int)progressBarColor.Error);
-                break;
+            <= 4000 => (int)progressBarColor.Error,
+            <= 7000 => (int)progressBarColor.Warning,
+            _ => (int)progressBarColor.Normal
+        });
 
-            case <= 700:
-                progressBarCurrentQuestion.SetState((int)progressBarColor.Warning);
-                break;
-
-            default:
-                progressBarCurrentQuestion.SetState((int)progressBarColor.Normal);
-                break;
-        }
-
-        if (_remainingTime <= 0)
+        if (_remainingMs == 0)
         {
             timerCurrentQuestion.Stop();
-
             lblFeedback.Text = "Temps écoulé !";
             lblFeedback.ForeColor = Color.OrangeRed;
-
-            _currentQuestionIndex++;
-
+            _session?.MoveNext();
             timerNextQuestion.Start();
         }
     }
