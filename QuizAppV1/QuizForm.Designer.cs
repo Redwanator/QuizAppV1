@@ -1,16 +1,22 @@
 ﻿namespace QuizAppV1;
 
+/// <summary>
+/// Partie générée automatiquement du formulaire principal du quiz. 
+/// Contient la définition et l’initialisation des composants graphiques.
+/// </summary>
 partial class QuizForm
 {
     /// <summary>
-    ///  Required designer variable.
+    /// Conteneur pour les composants graphiques du formulaire, utilisé pour la gestion des ressources.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
 
     /// <summary>
-    ///  Clean up any resources being used.
+    /// Libère les ressources utilisées par le formulaire, y compris les composants graphiques.
     /// </summary>
-    /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+    /// <param name="disposing">
+    /// True pour libérer les ressources managées et non managées ; False pour ne libérer que les ressources non managées.
+    /// </param>
     protected override void Dispose(bool disposing)
     {
         if (disposing && (components != null))
@@ -23,15 +29,15 @@ partial class QuizForm
     #region Windows Form Designer generated code
 
     /// <summary>
-    ///  Required method for Designer support - do not modify
-    ///  the contents of this method with the code editor.
+    /// Initialise et configure les composants de l’interface graphique du formulaire.
+    /// Ne pas modifier manuellement ce code.
     /// </summary>
     private void InitializeComponent()
     {
         components = new System.ComponentModel.Container();
         comboDisciplines = new ComboBox();
-        btnCommencer = new Button();
-        btnRecommencer = new Button();
+        btnStart = new Button();
+        btnRestart = new Button();
         timerCurrentQuestion = new System.Windows.Forms.Timer(components);
         panelQuiz = new Panel();
         progressBarCurrentQuestion = new ProgressBar();
@@ -44,6 +50,7 @@ partial class QuizForm
         lblFeedback = new Label();
         lblTimer = new Label();
         timerNextQuestion = new System.Windows.Forms.Timer(components);
+        comboLangues = new ComboBox();
         panelQuiz.SuspendLayout();
         SuspendLayout();
         // 
@@ -53,29 +60,29 @@ partial class QuizForm
         comboDisciplines.FormattingEnabled = true;
         comboDisciplines.Location = new Point(12, 12);
         comboDisciplines.Name = "comboDisciplines";
-        comboDisciplines.Size = new Size(304, 28);
+        comboDisciplines.Size = new Size(270, 28);
         comboDisciplines.TabIndex = 0;
         comboDisciplines.SelectedIndexChanged += comboDisciplines_SelectedIndexChanged;
         // 
-        // btnCommencer
+        // btnStart
         // 
-        btnCommencer.Location = new Point(322, 12);
-        btnCommencer.Name = "btnCommencer";
-        btnCommencer.Size = new Size(230, 30);
-        btnCommencer.TabIndex = 1;
-        btnCommencer.Text = "Commencer";
-        btnCommencer.UseVisualStyleBackColor = true;
-        btnCommencer.Click += btnCommencer_Click;
+        btnStart.Location = new Point(288, 10);
+        btnStart.Name = "btnStart";
+        btnStart.Size = new Size(200, 30);
+        btnStart.TabIndex = 1;
+        btnStart.Text = "Commencer";
+        btnStart.UseVisualStyleBackColor = true;
+        btnStart.Click += btnStart_Click;
         // 
-        // btnRecommencer
+        // btnRestart
         // 
-        btnRecommencer.Location = new Point(558, 12);
-        btnRecommencer.Name = "btnRecommencer";
-        btnRecommencer.Size = new Size(230, 30);
-        btnRecommencer.TabIndex = 2;
-        btnRecommencer.Text = "Recommencer";
-        btnRecommencer.UseVisualStyleBackColor = true;
-        btnRecommencer.Click += btnRecommencer_Click;
+        btnRestart.Location = new Point(494, 10);
+        btnRestart.Name = "btnRestart";
+        btnRestart.Size = new Size(200, 30);
+        btnRestart.TabIndex = 2;
+        btnRestart.Text = "Recommencer";
+        btnRestart.UseVisualStyleBackColor = true;
+        btnRestart.Click += btnRestart_Click;
         // 
         // timerCurrentQuestion
         // 
@@ -177,7 +184,7 @@ partial class QuizForm
         lblTimer.AutoSize = true;
         lblTimer.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
         lblTimer.ForeColor = Color.Maroon;
-        lblTimer.Location = new Point(604, 309);
+        lblTimer.Location = new Point(591, 309);
         lblTimer.Name = "lblTimer";
         lblTimer.Size = new Size(143, 23);
         lblTimer.TabIndex = 15;
@@ -188,14 +195,25 @@ partial class QuizForm
         timerNextQuestion.Interval = 1500;
         timerNextQuestion.Tick += timerNextQuestion_Tick;
         // 
+        // comboLangues
+        // 
+        comboLangues.DropDownStyle = ComboBoxStyle.DropDownList;
+        comboLangues.FormattingEnabled = true;
+        comboLangues.Location = new Point(698, 12);
+        comboLangues.Name = "comboLangues";
+        comboLangues.Size = new Size(90, 28);
+        comboLangues.TabIndex = 11;
+        comboLangues.SelectedIndexChanged += comboLangues_SelectedIndexChanged;
+        // 
         // QuizForm
         // 
         AutoScaleDimensions = new SizeF(8F, 20F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(800, 450);
+        Controls.Add(comboLangues);
         Controls.Add(panelQuiz);
-        Controls.Add(btnRecommencer);
-        Controls.Add(btnCommencer);
+        Controls.Add(btnRestart);
+        Controls.Add(btnStart);
         Controls.Add(comboDisciplines);
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
@@ -210,8 +228,8 @@ partial class QuizForm
 
     #endregion
     private ComboBox comboDisciplines;
-    private Button btnCommencer;
-    private Button btnRecommencer;
+    private Button btnStart;
+    private Button btnRestart;
     private System.Windows.Forms.Timer timerCurrentQuestion;
     private Panel panelQuiz;
     private Label lblQuestion;
@@ -224,4 +242,5 @@ partial class QuizForm
     private ProgressBar progressBarQuiz;
     private System.Windows.Forms.Timer timerNextQuestion;
     private ProgressBar progressBarCurrentQuestion;
+    private ComboBox comboLangues;
 }
