@@ -7,6 +7,6 @@ internal static class Messages
     public const string BadAnswer = "Mauvaise réponse !";
     public const string TimeOut = "Temps écoulé !";
     public const string QuizEndTitle = "Résultat";
-    public const string QuizEndMessage = "Quiz terminé !\r\nScore : {0} / {1}";
+    public const string QuizEndMessage = "Quiz terminé !\r\nScore : {0} / {1} ({2}%)";
     public const string RestartConfirmation = "Voulez-vous vraiment recommencer le quiz ?";
 }

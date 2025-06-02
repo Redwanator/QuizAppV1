@@ -1,5 +1,6 @@
 using QuizAppV1.Common;
 using QuizAppV1.Extensions;
+using QuizAppV1.Interfaces;
 using QuizAppV1.Models;
 using QuizAppV1.Services;
 
@@ -8,7 +9,7 @@ namespace QuizAppV1;
 public partial class QuizForm : Form
 {
     private Discipline? _selectedDiscipline;
-    private QuizService? _controller;
+    private IQuizManager? _manager;
     private int _questionDurationMs = 10000;
     private int _remainingMs = 10000;
 
@@ -49,18 +50,20 @@ public partial class QuizForm : Form
             return;
         }
 
-        _controller = new QuizService(_selectedDiscipline.Questions);
+        IAnswerChecker checker = new AnswerChecker();
+        IScoreCalculator calculator = new ScoreCalculator();
+        _manager = new QuizManager(_selectedDiscipline.Questions, checker, calculator);
 
         ToggleQuizUI(true);
 
-        progressBarQuiz.Maximum = _controller.TotalQuestions;
+        progressBarQuiz.Maximum = _manager.TotalQuestions;
 
         ShowQuestion();
     }
 
     private void ShowQuestion()
     {
-        if (_controller?.IsFinished != false)
+        if (_manager?.IsFinished != false)
         {
             ShowEndOfQuizMessage();
             ToggleQuizUI(false);
@@ -75,8 +78,17 @@ public partial class QuizForm : Form
 
     private void ShowEndOfQuizMessage()
     {
+        int correct = _manager!.CorrectAnswers;
+        int total = _manager.TotalQuestions;
+        int percent = _manager.GetScorePercentage();
+
         MessageBox.Show(
-            string.Format(Messages.QuizEndMessage, _controller!.CorrectAnswers, _controller.TotalQuestions),
+            string.Format(
+                Messages.QuizEndMessage,
+                correct,
+                total,
+                percent
+                ),
             Messages.QuizEndTitle,
             MessageBoxButtons.OK,
             icon: MessageBoxIcon.Information
@@ -85,7 +97,7 @@ public partial class QuizForm : Form
 
     private void DisplayCurrentQuestion()
     {
-        Question question = _controller!.CurrentQuestion!;
+        Question question = _manager!.CurrentQuestion!;
         lblQuestion.Text = question.Text;
 
         btnOption1.Text = question.Options.ElementAtOrDefault(0) ?? string.Empty;
@@ -95,8 +107,8 @@ public partial class QuizForm : Form
 
     private void DisplayProgress()
     {
-        lblProgression.Text = $"Question {_controller!.CurrentIndex + 1} sur {_controller.TotalQuestions}";
-        progressBarQuiz.Value = _controller.CurrentIndex + 1;
+        lblProgression.Text = $"Question {_manager!.CurrentIndex + 1} sur {_manager.TotalQuestions}";
+        progressBarQuiz.Value = _manager.CurrentIndex + 1;
         lblFeedback.Text = "";
     }
 
@@ -119,14 +131,20 @@ public partial class QuizForm : Form
         SwitchAnswerButtonsStates(false);
 
         string selectedAnswer = btnClicked.Text;
-        bool isCorrect = _controller!.RegisterAndCheckAnswer(selectedAnswer);
+        bool isCorrect = _manager!.RegisterAndCheckAnswer(selectedAnswer);
 
         if (isCorrect)
+        {
             lblFeedback.SetText(Messages.GoodAnswer, Color.Green);
+            btnClicked.BackColor = Color.LightGreen;
+        }
         else
+        {
             lblFeedback.SetText(Messages.BadAnswer, Color.Red);
+            btnClicked.BackColor = Color.IndianRed;
+        }
 
-        _controller.MoveNext();
+        _manager.MoveNext();
         timerNextQuestion.Start();
     }
 
@@ -142,15 +160,22 @@ public partial class QuizForm : Form
         if (confirm == DialogResult.No)
             return;
 
-        _controller?.Reset(_selectedDiscipline?.Questions ?? []);
+        _manager?.Reset(_selectedDiscipline?.Questions ?? []);
         ToggleQuizUI(false);
     }
 
     private void SwitchAnswerButtonsStates(bool enabled)
     {
+        Color defaultColor = SystemColors.Control;
+
         btnOption1.Enabled = enabled;
+        btnOption1.BackColor = defaultColor;
+
         btnOption2.Enabled = enabled;
+        btnOption2.BackColor = defaultColor;
+
         btnOption3.Enabled = enabled;
+        btnOption3.BackColor = defaultColor;
     }
 
     private enum progressBarColor
@@ -178,7 +203,7 @@ public partial class QuizForm : Form
         {
             timerCurrentQuestion.Stop();
             lblFeedback.SetText(Messages.TimeOut, Color.OrangeRed);
-            _controller?.MoveNext();
+            _manager?.MoveNext();
             timerNextQuestion.Start();
         }
     }

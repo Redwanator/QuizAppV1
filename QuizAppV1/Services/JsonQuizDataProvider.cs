@@ -28,13 +28,13 @@ internal class JsonQuizDataProvider : IQuizDataProvider
         string json = File.ReadAllText(_jsonPath, System.Text.Encoding.UTF8);
 
         // Configure l’option de désérialisation : les noms de propriétés ne sont pas sensibles à la casse.
-        var options = new JsonSerializerOptions
+        JsonSerializerOptions options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
 
         // Désérialise le contenu JSON en une liste de Discipline, sinon retourne une nouvelle liste vide.
-        var disciplines = JsonSerializer.Deserialize<List<Discipline>>(json, options)
+        List<Discipline> disciplines = JsonSerializer.Deserialize<List<Discipline>>(json, options)
                           ?? new List<Discipline>();
 
         // Retourne la liste des disciplines chargées.
