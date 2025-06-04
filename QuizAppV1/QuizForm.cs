@@ -14,10 +14,12 @@ namespace QuizAppV1;
 /// </summary>
 public partial class QuizForm : Form
 {
+    private const int DurationMs = 10000; // 10 000 ms => 10 secondes
+
     private Discipline? _selectedDiscipline;
     private IQuizManager? _manager;
-    private readonly int _questionDurationMs = 10000;
-    private int _remainingMs = 10000;
+    private readonly int _questionDurationMs = DurationMs;
+    private int _remainingMs = DurationMs;
 
     /// <summary>
     /// Initialise le formulaire principal et charge les disciplines disponibles pour le quiz.
@@ -63,7 +65,12 @@ public partial class QuizForm : Form
         btnStart.Text = Strings.StartButton;
         btnRestart.Text = Strings.RestartButton;
         lblFeedback.Text = "";
-        //lblProgression.Text = ""; // Je n'arrive pas à modifier en live la langue du texte de progression "Question 1 sur 5"...
+
+        /*
+         * TODO : Je n'arrive pas à modifier en live la langue du texte de progression "Question 1 sur 5"...
+         * lblProgression.Text = "";
+         */
+
         lblTimer.Text = string.Format(Strings.TimerRemaining, _questionDurationMs / 1000);
     }
 
