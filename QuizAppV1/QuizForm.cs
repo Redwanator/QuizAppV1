@@ -16,7 +16,7 @@ public partial class QuizForm : Form
 {
     private Discipline? _selectedDiscipline;
     private IQuizManager? _manager;
-    private int _questionDurationMs = 10000;
+    private readonly int _questionDurationMs = 10000;
     private int _remainingMs = 10000;
 
     /// <summary>
@@ -41,11 +41,11 @@ public partial class QuizForm : Form
     /// </summary>
     private static readonly Language[] SupportedLanguages =
     {
-        new("Français", "fr"),
-        new("English", "en"),
-        new("Español", "es"),
-        new("Italiano", "it"),
-        new("العربية", "ar")
+        new Language("Français", "fr"),
+        new Language("English", "en"),
+        new Language("Español", "es"),
+        new Language("Italiano", "it"),
+        new Language("العربية", "ar")
     };
 
     /// <summary>
@@ -54,7 +54,7 @@ public partial class QuizForm : Form
     private void InitializeLanguages()
     {
         comboLangues.Items.Clear();
-        comboLangues.Items.AddRange(SupportedLanguages.Select(lang => lang.DisplayName).ToArray());
+        comboLangues.Items.AddRange(SupportedLanguages.Select(l => l.DisplayName).ToArray());
         comboLangues.SelectedItem = SupportedLanguages[0].DisplayName; // Default: Français
     }
 
@@ -63,6 +63,7 @@ public partial class QuizForm : Form
         btnStart.Text = Strings.StartButton;
         btnRestart.Text = Strings.RestartButton;
         lblFeedback.Text = "";
+        //lblProgression.Text = ""; // Je n'arrive pas à modifier en live la langue du texte de progression "Question 1 sur 5"...
         lblTimer.Text = string.Format(Strings.TimerRemaining, _questionDurationMs / 1000);
     }
 
@@ -345,14 +346,14 @@ public partial class QuizForm : Form
 
         // Recherche la langue sélectionnée dans la liste disponible
         Language? selectedLanguage = SupportedLanguages.FirstOrDefault(
-            lang => lang.DisplayName == selectedDisplayName
+            l => l.DisplayName == selectedDisplayName
         );
 
         if (selectedLanguage is null)
             return;
 
         // Appliquer la langue choisie à l'application
-        Thread.CurrentThread.CurrentUICulture = new CultureInfo(selectedLanguage.CultureCode);
+        CultureInfo.CurrentUICulture = new CultureInfo(selectedLanguage.CultureCode);
         ApplyLanguage();
 
         // Recharger l'affichage de la question si une session est en cours
