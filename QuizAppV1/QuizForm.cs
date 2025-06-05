@@ -65,13 +65,8 @@ public partial class QuizForm : Form
         btnStart.Text = Strings.StartButton;
         btnRestart.Text = Strings.RestartButton;
         lblFeedback.Text = "";
-
-        /*
-         * TODO : Je n'arrive pas à modifier en live la langue du texte de progression "Question 1 sur 5"...
-         * lblProgression.Text = "";
-         */
-
         lblTimer.Text = string.Format(Strings.TimerRemaining, _questionDurationMs / 1000);
+        DisplayProgress();
     }
 
     /// <summary>
@@ -190,11 +185,15 @@ public partial class QuizForm : Form
     /// </summary>
     private void DisplayProgress()
     {
+        if (_manager == null)
+            return;
+
         lblProgression.Text = string.Format(
             Strings.ProgressFormat,
             _manager!.CurrentIndex + 1,
             _manager.TotalQuestions
             );
+
         progressBarQuiz.Value = _manager.CurrentIndex + 1;
         lblFeedback.Text = "";
     }
